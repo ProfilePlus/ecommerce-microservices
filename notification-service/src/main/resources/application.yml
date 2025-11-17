@@ -1,0 +1,24 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: notification-service
+  
+  # RabbitMQ配置
+  rabbitmq:
+    host: 192.168.xxx.xxx
+    port: 5672
+    username: admin
+    password: Admin@123
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+

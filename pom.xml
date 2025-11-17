@@ -1,81 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.demo</groupId>
-	<artifactId>ecommerce-microservices</artifactId>
-	<version>1.0.0</version>
-	<packaging>pom</packaging>
+    <groupId>com.demo</groupId>
+    <artifactId>ecommerce-microservices</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
 
-<!--	<modules>
-		<module>common</module>
-		<module>order-service</module>
-		<module>inventory-service</module>
-		<module>notification-service</module>
-		<module>gateway-service</module>
-	</modules>-->
+    <modules>
+        <module>common</module>
+        <module>order-service</module>
+        <module>inventory-service</module>
+        <module>notification-service</module>
+        <module>gateway-service</module>
+    </modules>
 
-	<properties>
-		<!-- Java 版本改为 1.8（对应 Java 8） -->
-		<java.version>1.8</java.version>
-		<!-- Spring Boot 2.7.x 兼容 Java 8（2.x 系列最后支持 Java 8 的版本） -->
-		<spring-boot.version>2.7.17</spring-boot.version>
-		<!-- Spring Cloud 2021.0.x 兼容 Spring Boot 2.7.x 和 Java 8 -->
-		<spring-cloud.version>2021.0.8</spring-cloud.version>
-		<!-- Spring Cloud Alibaba 2021.0.5.0 兼容上述版本和 Java 8 -->
-		<spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
-		<!-- 编译版本同步为 Java 8 -->
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+    <properties>
+        <java.version>1.8</java.version>
+        <spring-boot.version>2.7.17</spring-boot.version>
+        <spring-cloud.version>2021.0.8</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<!-- Spring Boot 依赖管理（兼容 Java 8） -->
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
-			<!-- Spring Cloud 依赖管理（兼容 Java 8） -->
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+            <!-- Spring Cloud -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
-			<!-- Spring Cloud Alibaba 依赖管理（兼容 Java 8） -->
-			<dependency>
-				<groupId>com.alibaba.cloud</groupId>
-				<artifactId>spring-cloud-alibaba-dependencies</artifactId>
-				<version>${spring-cloud-alibaba.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+            <!-- Spring Cloud Alibaba -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<build>
-		<plugins>
-			<!-- Spring Boot 打包插件（版本与 Spring Boot 一致） -->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot.version}</version>
-				<!-- 解决 Java 8 下 Lombok 等注解处理器的兼容性问题 -->
-				<configuration>
-					<fork>true</fork> <!-- 强制使用指定的 Java 版本编译 -->
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>
+

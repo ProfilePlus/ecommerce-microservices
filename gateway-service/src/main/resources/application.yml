@@ -1,0 +1,42 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: gateway-service
+  
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.xxx.xxx:8848
+    
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+        
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+        
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**
+      
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+

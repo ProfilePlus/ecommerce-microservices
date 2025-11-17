@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: notification-service
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.xxx.xxx:8848
+        file-extension: yaml
+        namespace: public
+      discovery:
+        server-addr: 192.168.xxx.xxx:8848
+

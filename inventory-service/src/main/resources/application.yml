@@ -1,0 +1,54 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: inventory-service
+  
+  datasource:
+    url: jdbc:postgresql://192.168.xxx.xxx:5432/order_db
+    username: admin
+    password: Admin@123
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  
+  redis:
+    host: 192.168.xxx.xxx
+    port: 6379
+    password: redis
+  
+  # Kafka消费者配置
+  kafka:
+    bootstrap-servers: 192.168.xxx.xxx:9092
+    consumer:
+      group-id: inventory-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  
+  # RabbitMQ配置
+  rabbitmq:
+    host: 192.168.xxx.xxx
+    port: 5672
+    username: admin
+    password: Admin@123
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
