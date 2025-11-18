@@ -1,54 +1,81 @@
-server:
-  port: 8082
+# ====================================
+# 库存服务配置文件
+# ====================================
+# 功能说明：
+# 1. 库存管理：查询库存、扣减库存
+# 2. 消息消费：监听Kafka订单创建消息
+# 3. 消息发布：通过RabbitMQ发送通知消息
+# 4. 缓存：使用Redis缓存库存数据
+# 5. 并发控制：使用乐观锁防止超卖
+# ====================================
 
+# 服务器配置
+server:
+  port: 8082  # 库存服务端口
+
+# Spring配置
 spring:
   application:
-    name: inventory-service
+    name: inventory-service  # 服务名称，用于在Nacos中注册和识别
   
+  # PostgreSQL数据源配置
   datasource:
-    url: jdbc:postgresql://192.168.xxx.xxx:5432/order_db
-    username: admin
-    password: Admin@123
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.xxx.xxx:5432/order_db  # 数据库连接URL
+    username: admin  # 数据库用户名
+    password: Admin@123  # 数据库密码
+    driver-class-name: org.postgresql.Driver  # JDBC驱动类
+    # 说明：库存数据持久化到PostgreSQL数据库
   
+  # JPA配置
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: update  # 自动更新数据库表结构
+    show-sql: true  # 控制台打印SQL语句
+    # 说明：使用JPA自动管理数据库表和实体映射
   
+  # Redis缓存配置
   redis:
-    host: 192.168.xxx.xxx
-    port: 6379
-    password: redis
+    host: 192.168.xxx.xxx  # Redis服务器地址
+    port: 6379  # Redis端口
+    password: redis  # Redis密码
+    # 说明：使用Redis缓存库存数据，提高查询性能，扣减库存后同步更新缓存
   
-  # Kafka消费者配置
+  # Kafka配置
   kafka:
-    bootstrap-servers: 192.168.xxx.xxx:9092
+    bootstrap-servers: 192.168.xxx.xxx:9092  # Kafka服务器地址
+    
+    # Kafka消费者配置（监听订单创建消息）
     consumer:
-      group-id: inventory-service-group
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: inventory-service-group  # 消费者组ID，同一组内的消费者共享消息
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer  # Key反序列化器
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer  # Value反序列化器（自动将JSON转为对象）
       properties:
-        spring.json.trusted.packages: '*'
-      auto-offset-reset: earliest
+        spring.json.trusted.packages: '*'  # 信任所有包（生产环境应指定具体包名）
+      auto-offset-reset: earliest  # 从最早的消息开始消费（首次启动时）
+      # 说明：监听order-created主题，接收订单创建消息并自动扣减库存
+    
+    # Kafka生产者配置（暂未使用，预留配置）
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   
-  # RabbitMQ配置
+  # RabbitMQ配置（发送通知消息）
   rabbitmq:
-    host: 192.168.xxx.xxx
-    port: 5672
-    username: admin
-    password: Admin@123
+    host: 192.168.xxx.xxx  # RabbitMQ服务器地址
+    port: 5672  # RabbitMQ端口
+    username: admin  # RabbitMQ用户名
+    password: Admin@123  # RabbitMQ密码
+    # 说明：库存扣减成功后，发送消息到RabbitMQ通知队列
 
+# Spring Boot Actuator监控配置
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: '*'  # 暴露所有监控端点
   metrics:
     export:
       prometheus:
-        enabled: true
+        enabled: true  # 启用Prometheus指标导出
+  # 访问示例：http://localhost:8082/actuator/health
 

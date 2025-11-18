@@ -1,42 +1,67 @@
-server:
-  port: 8000
+# ====================================
+# 网关服务配置文件
+# ====================================
+# 功能说明：
+# 1. 统一入口：所有外部请求通过网关路由到具体的微服务
+# 2. 服务发现：从Nacos获取服务实例，实现动态路由
+# 3. 负载均衡：使用lb://协议自动实现负载均衡
+# 4. 跨域支持：配置全局CORS，允许前端跨域访问
+# ====================================
 
+# 服务器配置
+server:
+  port: 8000  # 网关服务端口，作为系统统一入口
+
+# Spring配置
 spring:
   application:
-    name: gateway-service
+    name: gateway-service  # 服务名称，用于在Nacos中注册和识别
   
   cloud:
+    # Nacos服务发现配置
     nacos:
       discovery:
-        server-addr: 192.168.xxx.xxx:8848
+        server-addr: 192.168.xxx.xxx:8848  # Nacos服务器地址
+        # 功能：将网关服务注册到Nacos，其他服务可以发现网关
     
+    # Spring Cloud Gateway路由配置
     gateway:
       routes:
-        - id: order-service
-          uri: lb://order-service
+        # 订单服务路由
+        - id: order-service  # 路由唯一标识
+          uri: lb://order-service  # 目标服务URI，lb://表示负载均衡，从Nacos获取服务实例
           predicates:
-            - Path=/api/orders/**
+            - Path=/api/orders/**  # 路径匹配规则，匹配所有/api/orders/开头的请求
+          # 说明：所有/api/orders/**的请求会被转发到order-service服务
         
-        - id: inventory-service
-          uri: lb://inventory-service
+        # 库存服务路由
+        - id: inventory-service  # 路由唯一标识
+          uri: lb://inventory-service  # 目标服务URI
           predicates:
-            - Path=/api/inventory/**
+            - Path=/api/inventory/**  # 路径匹配规则
+          # 说明：所有/api/inventory/**的请求会被转发到inventory-service服务
         
-        - id: notification-service
-          uri: lb://notification-service
+        # 通知服务路由
+        - id: notification-service  # 路由唯一标识
+          uri: lb://notification-service  # 目标服务URI
           predicates:
-            - Path=/api/notifications/**
+            - Path=/api/notifications/**  # 路径匹配规则
+          # 说明：所有/api/notifications/**的请求会被转发到notification-service服务
       
+      # 全局CORS跨域配置
       globalcors:
         cors-configurations:
-          '[/**]':
-            allowed-origins: "*"
-            allowed-methods: "*"
-            allowed-headers: "*"
+          '[/**]':  # 对所有路径生效
+            allowed-origins: "*"  # 允许所有来源的跨域请求（生产环境应指定具体域名）
+            allowed-methods: "*"  # 允许所有HTTP方法（GET、POST、PUT、DELETE等）
+            allowed-headers: "*"  # 允许所有请求头
+        # 说明：解决前端跨域问题，允许浏览器从不同域名访问API
 
+# Spring Boot Actuator监控配置
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: '*'  # 暴露所有监控端点（健康检查、指标、环境信息等）
+  # 访问示例：http://localhost:8000/actuator/health
 

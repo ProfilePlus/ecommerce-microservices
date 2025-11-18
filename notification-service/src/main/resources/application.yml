@@ -1,24 +1,38 @@
-server:
-  port: 8083
+# ====================================
+# 通知服务配置文件
+# ====================================
+# 功能说明：
+# 1. 消息消费：监听RabbitMQ通知队列
+# 2. 多渠道通知：发送短信、邮件、推送等通知
+# 3. 异步处理：不阻塞主业务流程
+# ====================================
 
+# 服务器配置
+server:
+  port: 8083  # 通知服务端口
+
+# Spring配置
 spring:
   application:
-    name: notification-service
+    name: notification-service  # 服务名称，用于在Nacos中注册和识别
   
-  # RabbitMQ配置
+  # RabbitMQ配置（消费者）
   rabbitmq:
-    host: 192.168.xxx.xxx
-    port: 5672
-    username: admin
-    password: Admin@123
+    host: 192.168.xxx.xxx  # RabbitMQ服务器地址
+    port: 5672  # RabbitMQ端口
+    username: admin  # RabbitMQ用户名
+    password: Admin@123  # RabbitMQ密码
+    # 说明：监听notification.queue队列，接收库存服务发送的通知消息
 
+# Spring Boot Actuator监控配置
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: '*'  # 暴露所有监控端点
   metrics:
     export:
       prometheus:
-        enabled: true
+        enabled: true  # 启用Prometheus指标导出
+  # 访问示例：http://localhost:8083/actuator/health
 

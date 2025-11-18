@@ -1,45 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+====================================
+电商微服务系统 - 父POM配置文件
+====================================
+项目说明：
+这是一个基于Spring Cloud的微服务架构电商系统，包含以下服务：
+1. gateway-service: 网关服务，统一入口，路由转发
+2. order-service: 订单服务，订单管理
+3. inventory-service: 库存服务，库存管理
+4. notification-service: 通知服务，消息通知
+5. common: 公共模块，共享的工具类和实体
+
+技术栈：
+- Spring Boot 2.7.17: 基础框架
+- Spring Cloud 2021.0.8: 微服务框架
+- Spring Cloud Alibaba 2021.0.5.0: 阿里巴巴微服务组件
+  - Nacos: 服务注册与发现、配置中心
+- Kafka: 消息队列（订单->库存）
+- RabbitMQ: 消息队列（库存->通知）
+- Redis: 缓存
+- PostgreSQL: 数据库
+
+作者：demo
+版本：1.0.0
+====================================
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- 项目坐标 -->
     <groupId>com.demo</groupId>
     <artifactId>ecommerce-microservices</artifactId>
     <version>1.0.0</version>
-    <packaging>pom</packaging>
+    <packaging>pom</packaging>  <!-- 父项目打包类型为pom -->
 
+    <!-- 子模块列表 -->
     <modules>
-        <module>common</module>
-        <module>order-service</module>
-        <module>inventory-service</module>
-        <module>notification-service</module>
-        <module>gateway-service</module>
+        <module>common</module>  <!-- 公共模块 -->
+        <module>order-service</module>  <!-- 订单服务 -->
+        <module>inventory-service</module>  <!-- 库存服务 -->
+        <module>notification-service</module>  <!-- 通知服务 -->
+        <module>gateway-service</module>  <!-- 网关服务 -->
     </modules>
 
+    <!-- 全局属性配置 -->
     <properties>
+        <!-- Java版本 -->
         <java.version>1.8</java.version>
-        <spring-boot.version>2.7.17</spring-boot.version>
-        <spring-cloud.version>2021.0.8</spring-cloud.version>
-        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <!-- 框架版本统一管理 -->
+        <spring-boot.version>2.7.17</spring-boot.version>  <!-- Spring Boot版本 -->
+        <spring-cloud.version>2021.0.8</spring-cloud.version>  <!-- Spring Cloud版本 -->
+        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>  <!-- Spring Cloud Alibaba版本 -->
+        
+        <!-- Maven编译配置 -->
+        <maven.compiler.source>1.8</maven.compiler.source>  <!-- 源代码Java版本 -->
+        <maven.compiler.target>1.8</maven.compiler.target>  <!-- 目标字节码Java版本 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  <!-- 源文件编码 -->
     </properties>
 
+    <!-- 依赖管理：统一管理子模块的依赖版本 -->
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot -->
+            <!-- Spring Boot依赖管理 -->
+            <!-- 提供Spring Boot的所有依赖版本管理 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
-                <scope>import</scope>
+                <scope>import</scope>  <!-- import作用域：导入该pom的依赖管理 -->
             </dependency>
 
-            <!-- Spring Cloud -->
+            <!-- Spring Cloud依赖管理 -->
+            <!-- 提供Spring Cloud的所有依赖版本管理 -->
+            <!-- 包含：Gateway、LoadBalancer、OpenFeign等组件 -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -48,7 +86,9 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Spring Cloud Alibaba -->
+            <!-- Spring Cloud Alibaba依赖管理 -->
+            <!-- 提供阿里巴巴微服务组件的依赖版本管理 -->
+            <!-- 包含：Nacos、Sentinel、Seata等组件 -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
@@ -59,8 +99,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <!-- 构建配置 -->
     <build>
         <plugins>
+            <!-- Spring Boot Maven插件 -->
+            <!-- 功能：打包可执行jar，包含所有依赖 -->
+            <!-- 使用：mvn clean package 打包 -->
+            <!-- 运行：java -jar xxx.jar -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

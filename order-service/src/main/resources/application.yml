@@ -1,57 +1,75 @@
-server:
-  port: 8081
+# ====================================
+# 订单服务配置文件
+# ====================================
+# 功能说明：
+# 1. 订单管理：创建订单、查询订单
+# 2. 数据存储：使用PostgreSQL存储订单数据
+# 3. 缓存：使用Redis缓存热点订单数据
+# 4. 消息发布：通过Kafka发送订单创建消息
+# ====================================
 
+# 服务器配置
+server:
+  port: 8081  # 订单服务端口
+
+# Spring配置
 spring:
   application:
-    name: order-service
+    name: order-service  # 服务名称，用于在Nacos中注册和识别
   
-  # PostgreSQL配置
+  # PostgreSQL数据源配置
   datasource:
-    url: jdbc:postgresql://192.168.xxx.xxx:5432/order_db
-    username: admin
-    password: Admin@123
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.xxx.xxx:5432/order_db  # 数据库连接URL
+    username: admin  # 数据库用户名
+    password: Admin@123  # 数据库密码
+    driver-class-name: org.postgresql.Driver  # JDBC驱动类
+    # 说明：订单数据持久化到PostgreSQL数据库
   
+  # JPA配置
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: update  # 自动更新数据库表结构（开发环境使用，生产环境建议使用validate）
+    show-sql: true  # 控制台打印SQL语句，便于调试
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect  # PostgreSQL方言
+        format_sql: true  # 格式化SQL语句，提高可读性
+    # 说明：使用JPA自动管理数据库表和实体映射
   
-  # Redis配置
+  # Redis缓存配置
   redis:
-    host: 192.168.xxx.xxx
-    port: 6379
-    password: redis
-    database: 0
-    timeout: 3000ms
-    lettuce:
+    host: 192.168.xxx.xxx  # Redis服务器地址
+    port: 6379  # Redis端口
+    password: redis  # Redis密码
+    database: 0  # 使用的数据库索引（0-15）
+    timeout: 3000ms  # 连接超时时间
+    lettuce:  # Lettuce是Redis的Java客户端
       pool:
-        max-active: 8
-        max-idle: 8
-        min-idle: 0
+        max-active: 8  # 最大活跃连接数
+        max-idle: 8  # 最大空闲连接数
+        min-idle: 0  # 最小空闲连接数
+    # 说明：使用Redis缓存订单数据，提高查询性能
   
-  # Kafka配置
+  # Kafka配置（生产者）
   kafka:
-    bootstrap-servers: 192.168.xxx.xxx:9092
+    bootstrap-servers: 192.168.xxx.xxx:9092  # Kafka服务器地址
     producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      acks: 1
-      retries: 3
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer  # Key序列化器
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer  # Value序列化器（自动将对象转为JSON）
+      acks: 1  # 应答级别：1表示leader确认接收即可（平衡性能和可靠性）
+      retries: 3  # 发送失败重试次数
+    # 说明：订单创建后发送消息到Kafka的order-created主题
   
 
-# Actuator监控配置
+# Spring Boot Actuator监控配置
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: '*'  # 暴露所有监控端点
   metrics:
     export:
       prometheus:
-        enabled: true
+        enabled: true  # 启用Prometheus指标导出，用于监控
+  # 访问示例：http://localhost:8081/actuator/health
 
