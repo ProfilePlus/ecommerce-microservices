@@ -6,6 +6,7 @@
 
 ## 技术栈
 
+### 后端技术栈
 - **Java**: 1.8
 - **Maven**: 3.6.3+
 - **Spring Boot**: 2.7.17
@@ -17,6 +18,15 @@
 - **服务注册**: Nacos 2.2
 - **监控**: Prometheus + Grafana
 - **链路追踪**: SkyWalking
+
+### 前端技术栈
+- **框架**: Vue 3.4+ (Composition API)
+- **语言**: TypeScript 5.3+
+- **构建工具**: Vite 5.0+
+- **UI组件库**: Element Plus 2.5+
+- **状态管理**: Pinia 2.1+
+- **路由**: Vue Router 4.2+
+- **HTTP请求**: Axios 1.6+
 
 ## 项目结构
 
@@ -37,6 +47,17 @@ ecommerce-microservices/
 ├── inventory-service/         # 库存服务 (端口: 8082)
 ├── notification-service/      # 通知服务 (端口: 8083)
 ├── gateway-service/           # API 网关 (端口: 8000)
+├── frontend/                  # 前端项目 (端口: 3000)
+│   ├── src/
+│   │   ├── api/              # API接口封装
+│   │   ├── views/            # 页面组件
+│   │   ├── router/           # 路由配置
+│   │   ├── types/            # TypeScript类型
+│   │   ├── App.vue           # 根组件
+│   │   └── main.ts           # 应用入口
+│   ├── index.html            # HTML模板
+│   ├── vite.config.ts        # Vite配置
+│   └── package.json          # 前端依赖
 └── pom.xml                    # 父 POM 文件
 ```
 
@@ -67,9 +88,15 @@ ecommerce-microservices/
 ## 使用前准备
 
 ### 1. 环境要求
+
+**后端**：
 - JDK 1.8
 - Maven 3.6.3+
 - Docker（用于运行中间件）
+
+**前端**：
+- Node.js >= 16.0.0
+- npm >= 7.0.0 或 pnpm >= 7.0.0（推荐）
 
 ### 2. 启动中间件（请参考文档中的 Docker 部署章节）
 需要启动以下服务：
@@ -99,26 +126,18 @@ spring:
 
 ## 编译和运行
 
-### 1. 编译项目
+### 1. 启动后端服务
+
+#### 方式一：编译并运行 JAR 包
 ```bash
+# 编译项目
 cd ecommerce-microservices
 mvn clean package -DskipTests
-```
 
-### 2. 启动服务（按顺序启动）
-
-#### 方式一：直接运行 JAR 包
-```bash
-# 1. 启动订单服务
+# 按顺序启动各服务
 java -jar order-service/target/order-service-1.0.0.jar
-
-# 2. 启动库存服务
 java -jar inventory-service/target/inventory-service-1.0.0.jar
-
-# 3. 启动通知服务
 java -jar notification-service/target/notification-service-1.0.0.jar
-
-# 4. 启动网关服务
 java -jar gateway-service/target/gateway-service-1.0.0.jar
 ```
 
@@ -129,14 +148,56 @@ cd order-service
 mvn spring-boot:run
 ```
 
-## API 测试
+### 2. 启动前端项目
 
-### 1. 健康检查
+```bash
+# 进入前端目录
+cd frontend
+
+# 安装依赖（首次运行）
+npm install
+# 或使用 pnpm（推荐，更快）
+pnpm install
+
+# 启动开发服务器
+npm run dev
+# 或
+pnpm dev
+```
+
+前端服务会自动打开浏览器访问 http://localhost:3000
+
+**注意**：前端依赖后端服务，请确保后端所有服务（特别是网关服务）已启动。
+
+## 使用方式
+
+### 方式一：通过前端界面（推荐）
+
+访问前端页面：http://localhost:3000
+
+#### 1. 创建订单
+- 点击顶部导航"创建订单"
+- 填写订单信息（提供了示例数据）
+- 点击"提交订单"
+- 自动跳转到订单详情页
+
+#### 2. 查看订单列表
+- 在"订单列表"页面
+- 输入用户ID（默认1001）
+- 点击"查询"按钮
+
+#### 3. 查看订单详情
+- 在订单列表中点击"查看详情"
+- 查看订单完整信息和处理流程
+
+### 方式二：通过API测试
+
+#### 1. 健康检查
 ```bash
 curl http://localhost:8081/api/orders/health
 ```
 
-### 2. 创建订单
+#### 2. 创建订单
 ```bash
 curl -X POST http://localhost:8000/api/orders \
   -H "Content-Type: application/json" \
@@ -149,13 +210,13 @@ curl -X POST http://localhost:8000/api/orders \
   }'
 ```
 
-### 3. 查询订单
+#### 3. 查询订单
 ```bash
 # 替换 {orderNo} 为实际订单号
 curl http://localhost:8000/api/orders/{orderNo}
 ```
 
-### 4. 查询用户订单列表
+#### 4. 查询用户订单列表
 ```bash
 curl http://localhost:8000/api/orders/user/1001
 ```
@@ -219,14 +280,37 @@ curl http://localhost:8000/api/orders/user/1001
 ### 4. 数据库连接失败
 检查 PostgreSQL 是否启动，用户名密码是否正确（admin/Admin@123）。
 
+## 界面预览
+
+### 前端界面特点
+- 🎨 **现代简约设计**：采用Element Plus组件库，界面清爽大方
+- 🌈 **渐变色彩**：订单状态卡片采用渐变背景，视觉效果优雅
+- 📱 **响应式布局**：适配各种屏幕尺寸
+- ⚡ **流畅动画**：页面切换带有淡入淡出效果
+- 🔔 **友好提示**：操作反馈及时，错误提示清晰
+
+### 页面功能
+1. **创建订单页面**：表单验证、示例数据提示
+2. **订单列表页面**：用户订单查询、状态标签展示
+3. **订单详情页面**：完整信息展示、流程步骤可视化
+
 ## 后续优化方向
 
+### 后端优化
 1. 添加分布式事务支持（Seata）
 2. 添加限流降级（Sentinel）
 3. 完善异常处理和统一响应
 4. 添加单元测试和集成测试
 5. 容器化部署（Docker + Kubernetes）
 6. 持续集成/持续部署（Jenkins）
+
+### 前端优化
+1. 添加用户登录和权限管理
+2. 完善订单搜索和筛选功能
+3. 添加订单状态实时推送（WebSocket）
+4. 优化移动端适配
+5. 添加数据可视化图表（订单统计）
+6. 增加暗黑模式支持
 
 ## 代码注释说明
 
@@ -280,5 +364,9 @@ curl http://localhost:8000/api/orders/user/1001
 **作者**: Alex  
 **创建时间**: 2025-11-17  
 **版本**: 1.0.0  
-**注释添加时间**: 2025-11-18
+**注释添加时间**: 2025-11-18  
+**前端添加时间**: 2025-11-20  
+
+**前端访问**: http://localhost:3000  
+**后端网关**: http://localhost:8000
 
